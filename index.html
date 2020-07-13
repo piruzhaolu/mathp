@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Example</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+        <style>
+			body { 
+                margin: 0;
+                background-color: #000;
+                color: #fff;
+                font-family: Monospace;
+                font-size: 13px;
+                line-height: 24px;
+                overscroll-behavior: none;
+            }
+			canvas { display: block; }
+		</style>
+        
+    </head>
+    <body>
+        <script type="module">
+            import * as THREE from './src/Three.js';
+            import { OrbitControls } from './OrbitControls.js';
+
+            var renderer,camera,scene;
+            init();
+            animate();
+
+            function init(){
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                document.body.appendChild( renderer.domElement );
+
+                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
+                camera.position.set( 0, 0, 200 );
+                camera.lookAt( 0, 0, 0 );
+
+                scene = new THREE.Scene();
+
+                for(var i = 0; i < 4;i++){
+                    var colorValue;
+                    switch(i){
+                        case 0:colorValue=0xFF0000;break;
+                        case 1:colorValue=0x00FF00;break;
+                        case 2:colorValue=0x0000FF;break;
+                        case 3:colorValue=0xFFFFFFAA;break;
+                    }
+
+                    var material = new THREE.LineBasicMaterial( { color: colorValue } );
+
+                    var points = [];
+                    points.push( new THREE.Vector3( - 10, 0, i*5 ) );
+                    points.push( new THREE.Vector3( 0, 10, i*5 ) );
+                    points.push( new THREE.Vector3( 10, 0, i*5 ) );
+                    points.push( new THREE.Vector3( 10, i*5, 10 ) );
+                    points.push( new THREE.Vector3( 10, 10*i, 10 ) );
+
+                    var geometry = new THREE.BufferGeometry().setFromPoints( points );
+
+                    var line = new THREE.Line( geometry, material );
+
+                    scene.add( line );
+                }
+
+               
+                window.addEventListener( 'resize', onWindowResize, false );
+
+                var controls = new OrbitControls( camera, renderer.domElement );
+				controls.maxPolarAngle = Math.PI * 0.5;
+				controls.minDistance = 0;
+				controls.maxDistance = 5000;
+            }
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+            }
+
+            function animate(){
+                requestAnimationFrame( animate );
+
+				renderer.render( scene, camera );
+            }
+
+        </script>
+    </body>
+</html>
