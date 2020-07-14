@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Example</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+        <style>
+			body { 
+                margin: 0;
+                background-color: #000;
+                color: #fff;
+                font-family: Monospace;
+                font-size: 13px;
+                line-height: 24px;
+                overscroll-behavior: none;
+            }
+			canvas { display: block; }
+		</style>
+        
+    </head>
+    <body>
+        <script type="module">
+            //==============================================================
+            //               颜色模型的显示和转换 (RBG-HSL)
+            //==============================================================
+
+            import * as THREE from '../src/Three.js';
+            import { OrbitControls } from '../OrbitControls.js';
+
+
+            var renderer,camera,scene;
+            var geometry;
+            init();
+            animate();
+
+            function init(){
+                renderer = new THREE.WebGLRenderer();
+                renderer.setSize( window.innerWidth, window.innerHeight );
+                document.body.appendChild( renderer.domElement );
+
+                camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 100, 2000 );
+                camera.position.set( -250, 200, -250 );
+                camera.lookAt( 0, 0, 0 );
+
+                scene = new THREE.Scene();
+
+                geometry = new THREE.SphereGeometry( 3, 16, 16 );
+                for(var r = 0; r < 256;r+=16) {
+                    for(var g = 0; g < 256; g += 16) {
+                        for(var b = 0; b < 256; b+=16){
+                            AddSphere(r+500,g,b-128, new THREE.Color(r/255,g/255,b/255));
+                        }
+                    }
+                }
+                
+                for(var s = 0; s <= 100; s+=10){
+                    for(var l = 0; l <= 16; l+=1){
+                        var step = (100-s)*0.2+5;
+                        for(var h = 1;h<=360; h+=10){
+                            var v3 = new THREE.Vector3();
+                            v3.setFromCylindricalCoords(s*2,Math.PI/180*h,l*16);
+                            AddSphere(v3.x,v3.y,v3.z, new THREE.Color(`hsl(${h}, ${s}%, ${Number.parseInt( l/16*100)}%)`));
+                        }
+                    }
+                }
+
+                
+                // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+                // var sphere = new THREE.Mesh( geometry, material );
+                // scene.add( sphere );
+
+               
+                window.addEventListener( 'resize', onWindowResize, false );
+
+                var controls = new OrbitControls( camera, renderer.domElement );
+				//controls.maxPolarAngle = Math.PI * 0.5;
+				controls.minDistance = 0;
+				controls.maxDistance = 5000;
+            }
+
+
+            function AddSphere(x,y,z,color) {
+                var material = new THREE.MeshBasicMaterial( {color: color} );
+                var sphere = new THREE.Mesh( geometry, material );
+                sphere.position.x = x/2;
+                sphere.position.y = -y/2;
+                sphere.position.z = z/2;
+                scene.add( sphere );
+            }
+
+            
+
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize( window.innerWidth, window.innerHeight );
+
+            }
+
+            function animate(){
+                requestAnimationFrame( animate );
+                //console.log(camera.position);
+				renderer.render( scene, camera );
+            }
+
+        </script>
+    </body>
+</html>
