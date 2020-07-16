@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <title>Geometry</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 24px;
+            overscroll-behavior: none;
+        }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from "../src/Three.js";
+        import {OrbitControls} from "./jsm/controls/OrbitControls.js";
+
+
+        var renderer,camera,scene;
+        var geometry;
+        init();
+        animate();
+
+        function init(){
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 2000 );
+            camera.position.set( 0, 150, 500 );
+            camera.lookAt( 0, 0, 0 );
+
+            scene = new THREE.Scene();
+
+            let boxGeometry = new THREE.BoxGeometry(10,10,10);
+            let material = new THREE.MeshBasicMaterial({color:0x00FF00});
+            let box = new THREE.Mesh(boxGeometry, material);
+            scene.add(box);
+
+
+            // var heartShape = new THREE.Shape();
+            //
+            // heartShape.moveTo( 25, 25 );
+            // heartShape.lineTo(0,0);
+            // heartShape.bezierCurveTo( 25, 25, 20, 0, 0, 0 );
+            // heartShape.bezierCurveTo( 30, 0, 30, 35,30,35 );
+            // heartShape.bezierCurveTo( 30, 55, 10, 77, 25, 95 );
+            // heartShape.bezierCurveTo( 60, 77, 80, 55, 80, 35 );
+            // heartShape.bezierCurveTo( 80, 35, 80, 0, 50, 0 );
+            // heartShape.bezierCurveTo( 35, 0, 25, 25, 25, 25 );
+
+            var triangleShape = new THREE.Shape()
+                .moveTo( 80, 20 )
+                .lineTo( 40, 80 )
+                .lineTo( 120, 80 )
+                .lineTo( 80, 20 ); // close path
+
+            var points = triangleShape.getPoints();
+            var geometryPoints = new THREE.BufferGeometry().setFromPoints( points );
+            var line = new THREE.Line( geometryPoints, new THREE.LineBasicMaterial( { color: 0xFFFF00 } ) );
+            line.position.set( 0, 0, 0 + 25 );
+            scene.add(line);
+
+
+            var extrudeSettings = { amount: 1, bevelEnabled: true, bevelSegments: 1, steps: 1, bevelSize: 1, bevelThickness: 1 };
+
+            var triangle2 = new THREE.ExtrudeBufferGeometry( triangleShape, extrudeSettings );
+            var triangle = new THREE.ShapeBufferGeometry( triangleShape );
+
+            var mesh = new THREE.Mesh( triangle2, new THREE.MeshBasicMaterial({color:0xFF00FF}) );
+            var mesh3 = new THREE.Mesh( triangle, new THREE.MeshBasicMaterial({color:0xFF0000}) );
+            mesh3.position.set(0,0,-25);
+            scene.add(mesh);
+            scene.add(mesh3);
+
+
+            window.addEventListener( 'resize', onWindowResize, false );
+
+            var controls = new OrbitControls( camera, renderer.domElement );
+            //controls.maxPolarAngle = Math.PI * 0.5;
+            controls.minDistance = 0;
+            controls.maxDistance = 5000;
+        }
+
+
+
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+        }
+
+        function animate(){
+            requestAnimationFrame( animate );
+            //console.log(camera.position);
+            renderer.render( scene, camera );
+        }
+
+
+    </script>
+</body>
+</html>
