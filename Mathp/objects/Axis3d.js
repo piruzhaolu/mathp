@@ -1,5 +1,5 @@
 import {Axis2d} from './Axis2d.js';
-import * as THREE from "./../src/Three.js";
+import * as THREE from "../../src/Three.js";
 
 export class Axis3d extends Axis2d {
 

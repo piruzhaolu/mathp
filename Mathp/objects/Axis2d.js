@@ -1,4 +1,4 @@
-import * as THREE  from './../src/Three.js';
+import * as THREE  from '../../src/Three.js';
 
 export class Axis2d extends THREE.Group{
 
@@ -7,7 +7,7 @@ export class Axis2d extends THREE.Group{
         this.hex = hex;
         this._draw(new THREE.Vector3( -size, 0, 0 ),new THREE.Vector3( size, 0, 0 ));
         this._draw(new THREE.Vector3( 0, -size, 0 ),new THREE.Vector3( 0, size, 0 ));
-      //  this._draw(new THREE.Vector3( 0, 0, -size ),new THREE.Vector3( 0, 0, size ));
+
 
     }
 
@@ -24,7 +24,7 @@ export class Axis2d extends THREE.Group{
         dir.subVectors(end, start);
         dir.normalize();
 
-        let arrowHelper = new THREE.ArrowHelper( dir, end, 8, this.hex,6,3);
+        let arrowHelper = new THREE.ArrowHelper( dir, end, 8, this.hex);
         this.add( arrowHelper );
     }
 

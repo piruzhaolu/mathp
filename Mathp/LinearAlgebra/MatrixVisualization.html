@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+    <title>Geometry</title>
+    <script type="text/javascript" src="../objects/controls/dat.gui.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 24px;
+            overscroll-behavior: none;
+        }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from "../../src/Three.js";
+        import * as Mathvi from "../../Mathp/Mathvi.js";
+
+        import {OrbitControls} from "./../objects/controls/OrbitControls.js";
+
+        var renderer,camera,scene;
+        var geometry;
+        init();
+        animate();
+
+        function init() {
+            let M4 = new THREE.Matrix4().set(
+                1,0,0,0,
+                0,1,0,0,
+                0,0,1,0,
+                0,0,0,1
+            );
+
+            let M4Input = {
+                n11 : 1, n12 : 0,
+                n21 : 0, n22 : 1
+            }
+
+
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 2000);
+            camera.position.set(0, 0, 40);
+            camera.lookAt(0, 0, 0);
+
+            scene = new THREE.Scene();
+
+            let grid = new Mathvi.Grid(new THREE.Vector3(20,20,0), 1, 0x333333);
+            scene.add(grid);
+
+            let grid2 = new Mathvi.Grid(new THREE.Vector3(20,20,0), 1, 0x0a9096);
+            // grid2.matrix = M4;
+            // grid2.matrixAutoUpdate = false;
+            grid2.setMatrix4(M4);
+            grid2._AAA();
+            scene.add(grid2);
+
+            let axis2d = new Mathvi.Axis2d(20);
+            scene.add(axis2d);
+
+
+            window.addEventListener( 'resize', onWindowResize, false );
+
+            let controls = new OrbitControls( camera, renderer.domElement );
+            controls.minDistance = 0;
+            controls.maxDistance = 5000;
+
+            function ValueChange(newValue) {
+                let array = M4.toArray();
+                array[0] = M4Input.n11;
+                array[1] = M4Input.n12;
+                array[4] = M4Input.n21;
+                array[5] = M4Input.n22;
+                M4.fromArray(array);
+                grid2.setMatrix4(M4)
+                console.log(M4)
+            }
+
+            //创建dat.GUI，传递并设置属性
+            let gui = new dat.GUI();
+            gui.add(M4Input, 'n11',-5,5).onChange(ValueChange);
+            gui.add(M4Input, 'n12',-5,5).onChange(ValueChange);
+            gui.add(M4Input, 'n21',-5,5).onChange(ValueChange);
+            gui.add(M4Input, 'n22',-5,5).onChange(ValueChange);
+
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize( window.innerWidth, window.innerHeight );
+
+        }
+
+        function animate(){
+            requestAnimationFrame( animate );
+            //console.log(camera.position);
+            renderer.render( scene, camera );
+        }
+
+    </script>
+</body>
+</html>
