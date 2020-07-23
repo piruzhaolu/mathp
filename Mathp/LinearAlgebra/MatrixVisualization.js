@@ -13,6 +13,7 @@ export class MatrixVisualization{
 
     mi;
     mj;
+    mk;
 
     _grid;
     _M4;
@@ -23,6 +24,7 @@ export class MatrixVisualization{
         this.height = h;
         this.mi = new THREE.Vector3(1,0,0);
         this.mj = new THREE.Vector3(0,1,0);
+        this.mk = new THREE.Vector3(0,0,1);
 
         this._M4 = new THREE.Matrix4().set(
             1,0,0,0,
@@ -51,45 +53,37 @@ export class MatrixVisualization{
         this.scene.add(grid);
 
         this._grid = new Mathvi.Grid(new THREE.Vector3(20,20,0), 1, 0x0a9096);
-        // grid2.matrix = M4;
-        // grid2.matrixAutoUpdate = false;
         this._grid.setMatrix4(this._M4);
-        // grid2._AAA();
+
+        var geometry = new THREE.BoxGeometry( 4, 4, 4 );
+        var material = new THREE.MeshBasicMaterial( {color: 0xAA3300} );
+        var sphere = new THREE.Mesh( geometry, material );
+        sphere.position.x = 2;
+        sphere.position.y = 2;
+        sphere.position.z = 2;
+        this._grid.add( sphere );
+
         this.scene.add(this._grid);
 
         let axis2d = new Mathvi.Axis2d(20);
         this.scene.add(axis2d);
 
-
-        //window.addEventListener( 'resize', onWindowResize, false );
-
-
-
-        // function ValueChange(newValue) {
-        //     let array = M4.toArray();
-        //     array[0] = M4Input.n11;
-        //     array[1] = M4Input.n12;
-        //     array[4] = M4Input.n21;
-        //     array[5] = M4Input.n22;
-        //     M4.fromArray(array);
-        //     grid2.setMatrix4(M4)
-        //     console.log(M4)
-        // }
-        //
-        // //创建dat.GUI，传递并设置属性
-        // let gui = new dat.GUI();
-        // gui.add(M4Input, 'n11',-5,5).onChange(ValueChange);
-        // gui.add(M4Input, 'n12',-5,5).onChange(ValueChange);
-        // gui.add(M4Input, 'n21',-5,5).onChange(ValueChange);
-        // gui.add(M4Input, 'n22',-5,5).onChange(ValueChange);
     }
 
     UpdateIJK(){
         let array = this._M4.toArray();
         array[0] = this.mi.x;
         array[1] = this.mi.y;
+        array[2] = this.mi.z;
+
         array[4] = this.mj.x;
         array[5] = this.mj.y;
+        array[6] = this.mj.z;
+
+        array[8] = this.mk.x;
+        array[9] = this.mk.y;
+        array[10] = this.mk.z;
+
         this._M4.fromArray(array);
         this._grid.setMatrix4(this._M4)
     }

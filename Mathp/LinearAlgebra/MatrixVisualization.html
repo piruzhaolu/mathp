@@ -19,6 +19,12 @@
     </style>
 </head>
 <body>
+    <div style="position: absolute;background: #00000077;padding-left: 5px;padding-top: 5px">
+        使用Chrome开发者工具Console调用命令。<br/>
+        ito(x,y,z); 将i指向一个坐标<br/>
+        jto(x,y,z); 将j指向一个坐标<br/>
+        kto(x,y,z); 将k指向一个坐标<br/>
+    </div>
     <script type="module">
         import {MatrixVisualization} from "./MatrixVisualization.js";
         import {OrbitControls} from "./../objects/controls/OrbitControls.js";
@@ -33,12 +39,18 @@
         //         matrixVisualization.UpdateIJK();
         //     }).start();
 
+        let onStop = function(){
+            console.log(matrixVisualization._M4);
+        }
+
         window.ito = function(x,y,z = 0){
             let tween = new TWEEN.Tween(matrixVisualization.mi)
                 .to({ x: x,y:y,z:z }, 1000)
                 .onUpdate(function (o) {
                     matrixVisualization.UpdateIJK();
-                }).start();
+                })
+                .onComplete(onStop)
+                .start();
         }
 
         window.jto = function(x,y,z = 0){
@@ -46,8 +58,22 @@
                 .to({ x: x,y:y,z:z }, 1000)
                 .onUpdate(function (o) {
                     matrixVisualization.UpdateIJK();
-                }).start();
+                })
+                .onComplete(onStop)
+                .start();
         }
+
+        window.kto = function(x,y,z) {
+            let tween = new TWEEN.Tween(matrixVisualization.mk)
+                .to({ x: x,y:y,z:z }, 1000)
+                .onUpdate(function (o) {
+                    matrixVisualization.UpdateIJK();
+                })
+                .onComplete(onStop)
+                .start();
+        }
+
+
 
 
 

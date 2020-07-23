@@ -11,31 +11,10 @@ export class Grid extends THREE.Group{
 
     }
 
-    _AAA(){
-
-        let sphereGeometry = new THREE.SphereGeometry( 0.0001 );
-
-        let material_i = new THREE.PointsMaterial( {color: 0x00FF00} );
-        let sphere_i = new THREE.Points( sphereGeometry, material_i );
-        sphere_i.position.x = 1;
-        sphere_i.position.y = 0;
-        sphere_i.position.z = 0;
-        this.add( sphere_i );
-
-
-        let material_j = new THREE.PointsMaterial( {color: 0xFF0000} );
-        let sphere_j = new THREE.Points(sphereGeometry, material_j);
-        sphere_j.position.x = 0;
-        sphere_j.position.y = 1;
-        sphere_j.position.z = 0;
-        this.add( sphere_j );
-    }
 
     setMatrix4(m4){
         this.matrix = m4;
         this.matrixAutoUpdate = false;
-       // this.line.updateMatrix();
-        //this.geometry.applyMatrix4(m4);
     }
 
     _draw(endPos, gap, color){
